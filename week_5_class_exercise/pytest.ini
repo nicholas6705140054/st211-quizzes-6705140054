@@ -1,0 +1,5 @@
+[pytest]
+markers =
+    smoke: critical path tests
+    slow: tests that take a long time
+    regression: tests for previously fixed bugs
