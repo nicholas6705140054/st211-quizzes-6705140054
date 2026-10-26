@@ -13,9 +13,8 @@ it, and the result.
 | Lab | Folder | Topic | Result |
 | --- | --- | --- | --- |
 | Lab 1 | [lab_1_class_exercise](lab_1_class_exercise/) | Testing fundamentals: first tests, reading output, calculator, AAA, exceptions | 12 passed |
-| Lab 2 | [class_exercise](class_exercise/) | Effective test cases: AAA, independence, boundaries, naming, positive/negative | 23 passed |
-| Lab 3 (steps 1-2) | [week_4_class_exercise](week_4_class_exercise/) | Assertion types and test classes | 16 passed |
-| Lab 3 (steps 3-5) | [week_5_class_exercise](week_5_class_exercise/) | Markers, skip, xfail, `pytest.ini` | 6 passed, 1 skipped, 1 xfailed, 1 xpassed |
+| Lab 2 | [lab_2_class_exercise](lab_2_class_exercise/) | Effective test cases: AAA, independence, boundaries, naming, positive/negative | 23 passed |
+| Lab 3 | [lab_3_class_exercise](lab_3_class_exercise/) | Assertion types, test classes, markers, skip, xfail, `pytest.ini` | 22 passed, 1 skipped, 1 xfailed, 1 xpassed |
 | Lab 4 | [lab_4_class_exercise](lab_4_class_exercise/) | Fixtures: setup/teardown, scope, `conftest.py`, factories | 24 passed |
 | Lab 5 | [lab_5_class_exercise](lab_5_class_exercise/) | Parameterized and data-driven testing | 57 passed, 1 xfailed |
 
@@ -34,9 +33,8 @@ everything at once from the repository root would mix them up.
 
 ```bash
 cd lab_1_class_exercise && python -m pytest -v && cd ..
-cd class_exercise && python -m pytest -v && cd ..
-cd week_4_class_exercise && python -m pytest -v && cd ..
-cd week_5_class_exercise && python -m pytest --ignore=test_strict.py && cd ..
+cd lab_2_class_exercise && python -m pytest -v && cd ..
+cd lab_3_class_exercise && python -m pytest --ignore=test_strict.py && cd ..
 cd lab_4_class_exercise && python -m pytest -v && cd ..
 cd lab_5_class_exercise && python -m pytest -v && cd ..
 ```
