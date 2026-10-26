@@ -77,7 +77,7 @@ kinds of test matter.
 ## How to run
 
 ```bash
-cd class_exercise
+cd lab_2_class_exercise
 python -m pytest -v
 pytest test_named.py -v --no-header
 pytest test_positive.py test_negative.py -v
