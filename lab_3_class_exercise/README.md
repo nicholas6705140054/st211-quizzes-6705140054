@@ -1,21 +1,53 @@
-# Week 5 Class Exercise - Markers, Skips and Configuration
+# Lab 3 Class Exercise - Assertions and Test Organization
 
 # Min Htet Aung - 6705140054
 
-This week continued the Assertions and Test Organization lab from Step 3 to the end:
-tagging tests with markers, skipping tests, marking expected failures, and configuring
-pytest for the whole project with `pytest.ini`.
+This lab was done over two classes (weeks 4 and 5). Week 4 covered Steps 1-2: choosing
+the right kind of assertion for the kind of data being checked, and grouping related tests
+together inside a class. Week 5 continued from Step 3 to the end: tagging tests with
+markers, skipping tests, marking expected failures, and configuring pytest for the whole
+project with `pytest.ini`.
 
 ## What is in this folder
 
 | File | What it shows |
 | --- | --- |
+| `test_assertions.py` | Equality, inequality, comparison, membership, boolean and `None` assertions |
+| `test_collections.py` | Asserting on lists, dictionaries and sets |
+| `test_floats.py` | Comparing floating-point numbers with `pytest.approx` |
+| `shopping.py` | A small `ShoppingCart` class used as the code under test |
+| `test_shopping.py` | `TestShoppingCart`, a class that groups the four cart tests |
 | `test_markers.py` | Custom `smoke`, `slow` and `regression` markers |
 | `test_skips.py` | `skip` and `skipif` |
 | `test_xfail.py` | Expected failures, including an `XPASS` |
 | `test_conditional.py` | `skipif` based on a condition checked at runtime |
 | `test_strict.py` | An undeclared marker, kept on purpose to prove `--strict-markers` works |
 | `pytest.ini` | Project-wide configuration |
+
+## Step 1 - Assertion types
+
+I practised writing assertions that match the data instead of forcing everything into
+one style. Lists and dictionaries compare directly with `==`, dictionaries ignore key
+order, and sets support operations such as `&` for intersection.
+
+The float test was the important one. `0.1 + 0.2` does not give exactly `0.3` in binary
+floating point, so a plain `==` comparison fails. `pytest.approx(0.3)` passes because it
+allows a tiny tolerance, and `test_float_without_approx_fails` documents the raw
+inequality so the reason is visible in the test suite itself.
+
+## Step 2 - Grouping tests in a class
+
+`TestShoppingCart` collects every cart test in one place. The naming rules matter here:
+the class name has to start with `Test`, the methods have to start with `test_`, each
+method takes `self`, and the class must not define `__init__`, because pytest creates the
+instance itself.
+
+Grouping means I can run the whole group or one single method:
+
+```bash
+pytest test_shopping.py::TestShoppingCart -v
+pytest "test_shopping.py::TestShoppingCart::test_total_sums_prices" -v
+```
 
 ## Step 3 - Markers
 
@@ -28,12 +60,12 @@ Markers let one test suite serve several purposes:
   an external API, load large files or do heavy computation.
 - **regression** - tests that lock in a bug fix so the same bug cannot come back.
 
-Selecting by marker:
+Selecting by marker (run from this folder, excluding `test_strict.py`):
 
 ```bash
-pytest -m smoke -v                  # 2 selected, 7 deselected
-pytest -m "not slow" -v             # everything except the slow test
-pytest -m "smoke or regression" -v  # 3 selected, 6 deselected
+pytest -m smoke --ignore=test_strict.py                  # 2 passed, 23 deselected
+pytest -m "not slow" --ignore=test_strict.py             # only the slow test is deselected
+pytest -m "smoke or regression" --ignore=test_strict.py  # 3 passed, 22 deselected
 ```
 
 The deselected count in the output is the proof that the filtering worked.
@@ -90,17 +122,32 @@ Without `--strict-markers`, a typo like `@pytest.mark.smoek` would be accepted q
 that test would never be picked up by `pytest -m smoke`. The test would exist but never
 run, which is worse than a test that fails.
 
-This file is kept deliberately, so the full suite is run with it excluded:
+## How to run
+
+`test_strict.py` is kept deliberately, so the full suite is run with it excluded:
 
 ```bash
-cd week_5_class_exercise
+cd lab_3_class_exercise
 pytest --ignore=test_strict.py
 ```
 
-Result: **6 passed, 1 skipped, 1 xfailed, 1 xpassed**.
+Result: **22 passed, 1 skipped, 1 xfailed, 1 xpassed**.
+
+## Review questions
+
+1. **Why use `pytest.approx` for floats?** Floating-point maths is slightly imprecise
+   (`0.1 + 0.2` is not exactly `0.3`), so `approx` compares within a tiny tolerance.
+2. **Difference between skip and xfail?** `skip` never runs the test; `xfail` runs it and
+   expects it to fail, reporting `XPASS` if it unexpectedly passes.
+3. **What does `--strict-markers` protect against?** Typos in marker names, which would
+   otherwise be accepted silently and leave tests that never get selected.
 
 ## What I learned
 
+- Different data types deserve different assertions
+- Floating-point comparisons need `pytest.approx`, never `==`
+- Test classes group related tests so they can be selected and run as one unit
+- Pytest discovers tests by naming convention, so the names are part of the code
 - Markers turn one suite into many suites that can be selected on demand
 - `skip` never runs a test, `xfail` runs it and expects the failure
 - `XPASS` is a signal to go back and remove the marker
