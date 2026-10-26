@@ -20,3 +20,13 @@ def test_multiply():
 def test_divide():
     assert divide(10, 2) == 5
     assert divide(9, 3) == 3
+
+
+def test_add_aaa_pattern():
+    # Arrange
+    first_number = 100
+    second_number = 250
+    # Act
+    result = add(first_number, second_number)
+    # Assert
+    assert result == 350
